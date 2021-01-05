@@ -1,12 +1,17 @@
 # GriffonBot
-A multi-purpose RPG companion bot, developed for la Gilda del Grifone.
+A multi-purpose RPG companion bot, developed for the discord server of la [Gilda del Grifone](http://www.gildadelgrifonetorino.it/).  
+[Visit us](https://www.facebook.com/LaGildadelGrifone)
 
 ## Dependencies
 - Discord.py (https://github.com/Rapptz/discord.py)
 - d20 (https://pypi.org/project/d20/)
 
 ## Features
-_Coming soon_
+* Dice roller using d20 library (see dependencies for the syntax)
+* Dado semaforo for Crossdoom rpg
 
 ## Commands
-_Coming soon_
+* !help -> show available commands
+* !roll -> roll a dice using an expression of the type NdX
+* !deal -> deal cards (WORK IN PROGRESS)
+* !quit -> disconnect the bot (if run locally)
