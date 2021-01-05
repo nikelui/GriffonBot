@@ -131,3 +131,4 @@ dmypy.json
 # other files
 token.txt
 inviteurl.txt
+*.xcf
