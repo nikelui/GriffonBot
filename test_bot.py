@@ -12,7 +12,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 
 
 help_command = MyHelpCommand(brief='-> Mostra questo messaggio',
-    no_category = 'Comandi:', commands_heading = 'Comandi:')
+    no_category = 'Comandi', commands_heading = 'Comandi')
 
 bot = commands.Bot(command_prefix='!', help_command=help_command)
 
@@ -20,6 +20,10 @@ bot = commands.Bot(command_prefix='!', help_command=help_command)
 @bot.event
 async def on_ready():
     print('We have logged on as {0.user}'.format(bot))
+## Uncomment to change avatar
+#    with open('img/icon.png', 'rb') as f:
+#        image = f.read()
+#        await bot.user.edit(avatar=image)
 
 
 # New implementation using d20
