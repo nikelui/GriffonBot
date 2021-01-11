@@ -6,7 +6,7 @@ import d20
 
 class MyHelpCommand(commands.DefaultHelpCommand):    
     def get_ending_note(self):
-        return 'Scrivi !help <comando> per avere più informazioni su uno specifico comando.'
+        return 'Scrivi $help <comando> per avere più informazioni su uno specifico comando.'
     def command_not_found(self, command):
         return f'Comando <{command}> non trovato'
 
@@ -14,7 +14,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 help_command = MyHelpCommand(brief='-> Mostra questo messaggio',
     no_category = 'Comandi', commands_heading = 'Comandi')
 
-bot = commands.Bot(command_prefix='!', help_command=help_command)
+bot = commands.Bot(command_prefix='$', help_command=help_command)
 
 
 @bot.event
@@ -66,10 +66,10 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
                     await ctx.send('Risultato: {}\n{}'.format(result_dice, result_string))
                 
             except ValueError:
-                await ctx.send('Inserire un\'espressione valida (prova !help)')
+                await ctx.send('Inserire un\'espressione valida (prova $help)')
                 return
         else:
-            await ctx.send('Inserire un\'espressione valida (prova !help)')
+            await ctx.send('Inserire un\'espressione valida (prova $help)')
             return
 
 
