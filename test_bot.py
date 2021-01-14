@@ -2,11 +2,12 @@ from discord.ext import commands
 import discord
 import random
 import d20
+from games import diceIterClass
 
 
 class MyHelpCommand(commands.DefaultHelpCommand):    
     def get_ending_note(self):
-        return 'Scrivi $help <comando> per avere più informazioni su uno specifico comando.'
+        return 'Scrivi `c.help <comando>` per avere più informazioni su uno specifico comando.'
     def command_not_found(self, command):
         return f'Comando <{command}> non trovato'
 
@@ -14,7 +15,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 help_command = MyHelpCommand(brief='-> Mostra questo messaggio',
     no_category = 'Comandi', commands_heading = 'Comandi')
 
-bot = commands.Bot(command_prefix='$', help_command=help_command)
+bot = commands.Bot(command_prefix='c.', help_command=help_command)
 
 
 @bot.event
@@ -66,12 +67,36 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
                     await ctx.send('Risultato: {}\n{}'.format(result_dice, result_string))
                 
             except ValueError:
-                await ctx.send('Inserire un\'espressione valida (prova $help)')
+                await ctx.send('Inserire un\'espressione valida (prova `c.help`)')
                 return
         else:
-            await ctx.send('Inserire un\'espressione valida (prova $help)')
+            await ctx.send('Inserire un\'espressione valida (prova `c.help`)')
             return
 
+
+@bot.command(name='attack', brief='-> Tira dadi e usa le regole di Crossdoom per l\'attacco')
+async def _attack(ctx, dice: str):
+    """Tira un dado usando un'espressione (vedi c.help roll) e calcola
+il risultato dell'attacco secondo il regolamento di Crossdoom.
+
+Restituisce: singoli valori e risultato dell'attacco
+
+Per maggiori informazioni sulla sintassi utilizzata:
+https://d20.readthedocs.io/en/latest/start.html#dice-syntax
+Per il regolamento di Crossdoom:
+https://www.crossdoom.it/
+"""
+    try:
+        initial_roll = {}
+        processed_roll = {}
+        res = d20.roll(dice)
+        dices = diceIterClass(res)  # Iterate and get dice values
+        
+        
+        await ctx.send('Risultato: {}'.format(str(res)))
+    except d20.errors.RollSyntaxError:
+        await ctx.send('Espressione non valida, consulta `c.help roll`')
+    
 
 @bot.command(name='quit', brief='-> Disconnetti il bot')
 async def _quit(ctx):
