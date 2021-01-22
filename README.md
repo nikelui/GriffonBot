@@ -22,12 +22,23 @@ BOT_TOKEN=<token_segreto_qui>
 Per eseguire un comando, digitare il prefisso `g.` seguito dal nome del comando:
 
 * `  g.help` -> mostra i comandi disponibili
-* `  g.roll` -> tira dadi usando un'espressione del tipo `NdX`
-* `g.attack` -> tira dadi (vedi <roll>) e risolvi attacco secondo regole di Crossdoom
+* `  g.roll` -> tira dadi usando un'espressione del tipo `NdX`.
+* `g.attack` -> tira dadi (vedi \<roll>) e risolvi attacco secondo regole di Crossdoom
 * `  g.deal` -> distribuisci carte [work in progress]
 * `  g.quit` -> disconnetti il bot (solo per sviluppatore)
 
 Per maggiori informazioni su uno specifico comando, digitare `g.help <nome_comando>`
+
+### comando g.roll \<espressione>
+Tira un dado usando un'espressione del tipo `NdX`:
+- **N**: numero di dadi [int]
+- **X**: tipo di dado [int o 's']
+  - l'espressione `Nds` viene usata per tirare **N** _dadi semaforo_.
+
+**Restituisce**: singoli valori dei dadi e somma dei tiri
+
+Per maggiori informazioni sulla sintassi utilizzata:
+[https://d20.readthedocs.io/en/latest/start.html#dice-syntax](https://d20.readthedocs.io/en/latest/start.html#dice-syntax)
 
 
 # GriffonBot [ENG]
@@ -55,8 +66,19 @@ To run a command, write the prefix `g.` followed by the command name:
 
 * `  g.help` -> show available commands
 * `  g.roll` -> roll dices using an expression of the kind `NdX`
-* `g.attack` -> roll dices (see <roll>) and solve attack using Crossdoom rules
+* `g.attack` -> roll dices (see \<roll>) and solve attack using Crossdoom rules
 * `  g.deal` -> deal cards [work in progress]
 * `  g.quit` -> disconnect the bot (developer only)
 
 For more information about a specific command, write `g.help <command_name>`
+
+### command g.roll \<expression>
+Roll dices with an expression of the kind `NdX`:
+- **N**: number of dices [int]
+- **X**: type of dices [int o 's']
+  - the expression `Nds` is used to roll **N** _dadi semaforo_.
+
+**Return**: single rolls and sum of dices.
+
+For more info on the used syntax:
+[https://d20.readthedocs.io/en/latest/start.html#dice-syntax](https://d20.readthedocs.io/en/latest/start.html#dice-syntax)
