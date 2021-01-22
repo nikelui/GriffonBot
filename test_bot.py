@@ -7,7 +7,7 @@ from games import diceIterClass
 
 class MyHelpCommand(commands.DefaultHelpCommand):    
     def get_ending_note(self):
-        return 'Scrivi `c.help <comando>` per avere più informazioni su uno specifico comando.'
+        return 'Scrivi `g.help <comando>` per avere più informazioni su uno specifico comando.'
     def command_not_found(self, command):
         return f'Comando <{command}> non trovato'
 
@@ -15,7 +15,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 help_command = MyHelpCommand(brief='-> Mostra questo messaggio',
     no_category = 'Comandi', commands_heading = 'Comandi')
 
-bot = commands.Bot(command_prefix='c.', help_command=help_command)
+bot = commands.Bot(command_prefix='g.', help_command=help_command)
 
 
 @bot.event
@@ -67,10 +67,10 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
                     await ctx.send('Risultato: {}\n{}'.format(result_dice, result_string))
                 
             except ValueError:
-                await ctx.send('Inserire un\'espressione valida (prova `c.help`)')
+                await ctx.send('Inserire un\'espressione valida (prova `g.help`)')
                 return
         else:
-            await ctx.send('Inserire un\'espressione valida (prova `c.help`)')
+            await ctx.send('Inserire un\'espressione valida (prova `g.help`)')
             return
 
 
@@ -87,24 +87,40 @@ Per il regolamento di Crossdoom:
 https://www.crossdoom.it/
 """
     try:
-        initial_roll = {}
-        processed_roll = {}
         res = d20.roll(dice)
-        dices = diceIterClass(res)  # Iterate and get dice values
-        
-        
-        await ctx.send('Risultato: {}'.format(str(res)))
+        dices = diceIterClass(res.expr.roll)  # Iterate and get dice values
+        message = ['Attacco:']
+        for key in dices.initial_rolls.keys():
+            if isinstance(key, int) and len(dices.initial_rolls[key]) > 0:
+                message.append('{}d{}{} -> {}'.format(len(dices.initial_rolls[key]), key,
+                               dices.initial_rolls[key], dices.crossdoom_rolls[key]))
+        total = [sum(dices.crossdoom_rolls[x]) for x in dices.crossdoom_rolls if isinstance(x,int)]
+        if sum(total) > 0:
+            message.append('Totale: {}'.format(sum(total)))
+        else:
+            message.append('Attacco fallito.')
+        dice_message = '\n'.join(message)
+        await ctx.send(dice_message)
     except d20.errors.RollSyntaxError:
-        await ctx.send('Espressione non valida, consulta `c.help roll`')
+        await ctx.send('Espressione non valida, consulta `g.help roll`')
     
 
 @bot.command(name='quit', brief='-> Disconnetti il bot')
+@commands.is_owner()  # just the bot owner has permission
 async def _quit(ctx):
     """Disconnette il bot dal server e lascia una citazione. Punti extra se si indovina la fonte."""
     with open('quote.txt', 'r') as quotes:
         lines = quotes.readlines()
         await ctx.send('{}'.format(lines.pop(random.randint(0, len(lines)-1))))
     await bot.logout()
+# Error handling
+@_quit.error
+async def stop_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):  # if user has no permissions
+        with open('quote.txt', 'r') as quotes:
+            lines = quotes.readlines()
+            await ctx.send('{}'.format(lines.pop(random.randint(0, len(lines)-1))))
+        # if you are not the owner, do not logout
 
 
 @bot.command(name='deal', brief='-> Assegna carte')

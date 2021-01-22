@@ -1,6 +1,7 @@
 # Script containing game logics
 
 import random
+import d20
 
 
 class diceIterClass:
@@ -8,7 +9,7 @@ class diceIterClass:
     def __init__(self, obj):
         self.children = []
         self.initial_rolls = {}
-        self.processed_rolls = {}
+        self.crossdoom_rolls = {}
         self.obj = obj
         self.traverse_expression(self.obj)
         self.fill_dict()
@@ -41,11 +42,12 @@ class diceIterClass:
         for key in self.crossdoom_rolls.keys():
             if isinstance(key, int):  # process only dices
                 # First, remove one good result for each '1'
-                while (self.crossdoom_rolls[key][0] == 1 and 
-                       len(self.crossdoom_rolls[key]) >= 1):
-                    if len(self.crossdoom_rolls[key]) >= 2:
-                        _ = self.crossdoom_rolls[key].pop(-1)
-                    _ = self.crossdoom_rolls[key].pop(0)
+                if len(self.crossdoom_rolls[key]) > 0:
+                    while (self.crossdoom_rolls[key][0] == 1 and 
+                           len(self.crossdoom_rolls[key]) >= 1):
+                        if len(self.crossdoom_rolls[key]) >= 2:
+                            _ = self.crossdoom_rolls[key].pop(-1)
+                        _ = self.crossdoom_rolls[key].pop(0)
                 # Now, explode results once
                 to_explode = sum([x == key for x in self.crossdoom_rolls[key]])
                 for _i in range(to_explode):
