@@ -72,7 +72,7 @@ class FrenchDeck:
         self.joker = joker
         self.new_deck()
     
-    def new_deck(self)
+    def new_deck(self):
         self.cards = []
         if self.joker:
             cards.append(FrenchCard(0, 0))  # red Joker
