@@ -65,16 +65,25 @@ class FrenchCard:
 
 
 class FrenchDeck:
+    """A class to represent a french cards deck, with methods for shuffling and dealing cards
+    """
     def __init__(self, joker=True):
         self.cards = []
-        if joker:
-            cards.append(FrenchCard(0, 0))
-            cards.append(FrenchCard(0, 1))
+        self.joker = joker
+        self.new_deck()
+    
+    def new_deck(self)
+        self.cards = []
+        if self.joker:
+            cards.append(FrenchCard(0, 0))  # red Joker
+            cards.append(FrenchCard(0, 1))  # black Joker
         for i in range(1,14):
             for j in range(4):
                 self.cards.append(FrenchCard(i, j))
 
-    def shuffle(self):
+    def shuffle(self, new=False):
+        if new:
+            self.new_deck()
         random.shuffle(self.cards)
     
     def deal(self, n=1):

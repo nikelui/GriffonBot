@@ -78,7 +78,7 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
 
 @bot.command(name='attack', brief='-> Tira dadi e usa le regole di Crossdoom per l\'attacco')
 async def _attack(ctx, dice: str):
-    """Tira un dado usando un'espressione (vedi c.help roll) e calcola
+    """Tira un dado usando un'espressione (vedi g.help roll) e calcola
 il risultato dell'attacco secondo il regolamento di Crossdoom.
 
 Restituisce: singoli valori e risultato dell'attacco
@@ -132,9 +132,6 @@ WORK IN PROGRESS
 """
     await ctx.send('Just a test to see if the command works')
 
-
-#with open('token.txt', 'r') as tk:
-#    token = tk.read()
 
 # NEW (secure) method to load token using .env file
 ENV_FILE = find_dotenv()
