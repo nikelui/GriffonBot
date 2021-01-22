@@ -1,4 +1,5 @@
 from discord.ext import commands
+from dotenv import load_dotenv, find_dotenv
 import discord
 import random
 import d20
@@ -115,6 +116,12 @@ WORK IN PROGRESS
     await ctx.send('Just a test to see if the command works')
 
 
-with open('token.txt', 'r') as tk:
-    token = tk.read()
-bot.run(token)
+#with open('token.txt', 'r') as tk:
+#    token = tk.read()
+
+# NEW (secure) method to load token using .env file
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
+bot_token = os.getenv('BOT_TOKEN')
+bot.run(bot_token)
