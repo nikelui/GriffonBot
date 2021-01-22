@@ -2,6 +2,7 @@ from discord.ext import commands
 from dotenv import load_dotenv, find_dotenv
 import discord
 import random
+import os
 import d20
 from games import diceIterClass
 
