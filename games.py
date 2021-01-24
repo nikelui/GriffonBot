@@ -1,5 +1,4 @@
 # Script containing game logics
-
 import random
 import d20
 
@@ -13,14 +12,14 @@ class diceIterClass:
         self.obj = obj
         self.traverse_expression(self.obj)
         self.fill_dict()
-  
+
     def traverse_expression(self, obj):
         if isinstance(obj, d20.expression.BinOp):
              self.children.insert(0, obj.right)
              self.traverse_expression(obj.left)
         elif isinstance(obj, d20.expression.Dice):
              self.children.insert(0, obj)
-    
+
     def fill_dict(self):
         self.initial_rolls['int'] = []
         self.crossdoom_rolls['int'] = []
@@ -30,7 +29,7 @@ class diceIterClass:
             if isinstance(dice, d20.expression.Dice):
                 self.initial_rolls[dice.size] = []
                 self.crossdoom_rolls[dice.size] = []
-                for die in dice.values:  # loop through single dies    
+                for die in dice.values:  # loop through single dies
                     self.initial_rolls[dice.size].append(die.values[0].values[0])
                     self.crossdoom_rolls[dice.size].append(die.values[0].values[0])
                 self.initial_rolls[dice.size].sort()
@@ -43,7 +42,7 @@ class diceIterClass:
             if isinstance(key, int):  # process only dices
                 # First, remove one good result for each '1'
                 if len(self.crossdoom_rolls[key]) > 0:
-                    while (self.crossdoom_rolls[key][0] == 1 and 
+                    while (self.crossdoom_rolls[key][0] == 1 and
                            len(self.crossdoom_rolls[key]) >= 1):
                         if len(self.crossdoom_rolls[key]) >= 2:
                             _ = self.crossdoom_rolls[key].pop(-1)
@@ -71,7 +70,7 @@ class FrenchDeck:
         self.cards = []
         self.joker = joker
         self.new_deck()
-    
+
     def new_deck(self):
         self.cards = []
         if self.joker:
@@ -85,7 +84,7 @@ class FrenchDeck:
         if new:
             self.new_deck()
         random.shuffle(self.cards)
-    
+
     def deal(self, n=1):
         to_deal = []
         for i in range(n):

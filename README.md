@@ -1,6 +1,6 @@
 # GriffonBot [ITA]
-Un bot multi-funzione in Python, sviluppato per il server Discord della [Gilda del Grifone](http://www.gildadelgrifonetorino.it/).  
-[Vienici a trovare](https://www.facebook.com/LaGildadelGrifone)  
+Un bot multi-funzione in Python, sviluppato per il server Discord della [Gilda del Grifone](http://www.gildadelgrifonetorino.it/).
+[Vienici a trovare](https://www.facebook.com/LaGildadelGrifone)
 
 ## Dipendenze
 - Discord.py (https://github.com/Rapptz/discord.py)
@@ -14,7 +14,8 @@ BOT_TOKEN=<token_segreto_qui>
 
 ## Funzionalità
 * Tira dadi, mediante la libreria d20 ([sintassi dei dadi](https://d20.readthedocs.io/en/latest/start.html#dice-syntax))
-* _Dado semaforo_ per il gioco di ruolo [Crossdoom](https://www.crossdoom.it/)
+* _Dado del destino_ per il gioco di ruolo [Crossdoom](https://www.crossdoom.it/)
+* _Dado fantasma_ per il gioco di ruolo [Ghostbusters](https://ghostbusterscities.com/media/ghostbusters-the-roleplaying-game/)
 * Risoluzione degli attacchi secondo le regole di [Crossdoom](https://www.crossdoom.it/) [_WORK IN PROGRESS_]
 * Dichiara un mazzo di carte e distribuiscile [_WORK IN PROGRESS_]
 
@@ -24,6 +25,7 @@ Per eseguire un comando, digitare il prefisso `g.` seguito dal nome del comando:
 * `  g.help` -> mostra i comandi disponibili
 * `  g.roll` -> tira dadi usando un'espressione del tipo `NdX`.
 * `g.attack` -> tira dadi (vedi \<roll>) e risolvi attacco secondo regole di Crossdoom
+* ` g.ghost` -> tira dadi a 6 facce, incluso un dado fantasma, secondo il regolamento di Ghostbusters
 * `  g.deal` -> distribuisci carte [work in progress]
 * `  g.quit` -> disconnetti il bot (solo per sviluppatore)
 
@@ -33,7 +35,7 @@ Per maggiori informazioni su uno specifico comando, digitare `g.help <nome_coman
 Tira un dado usando un'espressione del tipo `NdX`:
 - **N**: numero di dadi [int]
 - **X**: tipo di dado [int o 's']
-  - l'espressione `Nds` viene usata per tirare **N** _dadi semaforo_.
+  - l'espressione `Nds` viene usata per tirare **N** _dadi del destino_.
 
 **Restituisce**: singoli valori dei dadi e somma dei tiri
 
@@ -42,8 +44,8 @@ Per maggiori informazioni sulla sintassi utilizzata:
 
 
 # GriffonBot [ENG]
-A multi-purpose RPG companion bot in Python, developed for the discord server of la [Gilda del Grifone](http://www.gildadelgrifonetorino.it/).  
-[Visit us](https://www.facebook.com/LaGildadelGrifone)  
+A multi-purpose RPG companion bot in Python, developed for the discord server of la [Gilda del Grifone](http://www.gildadelgrifonetorino.it/).
+[Visit us](https://www.facebook.com/LaGildadelGrifone)
 
 **Note**: To authenticate the bot, you need to place your discord token in a file called `.env` in the same directory as the scripts, containing the following line:
 ```
@@ -57,7 +59,8 @@ BOT_TOKEN=<secret_token_here>
 
 ## Features
 * Dice roller using d20 library ([dice syntax](https://d20.readthedocs.io/en/latest/start.html#dice-syntax))
-* Dado semaforo for [Crossdoom](https://www.crossdoom.it/) rpg
+* _Destiny dice_ for [Crossdoom](https://www.crossdoom.it/) rpg
+* _Ghost dice_ for Ghostbusters (https://ghostbusterscities.com/media/ghostbusters-the-roleplaying-game/) rpg
 * Attack resolution with the rules from [Crossdoom](https://www.crossdoom.it/) rpg [_WORK IN PROGRESS_]
 * Prepare a deck and deal cards [_WORK IN PROGRESS_]
 
@@ -67,6 +70,7 @@ To run a command, write the prefix `g.` followed by the command name:
 * `  g.help` -> show available commands
 * `  g.roll` -> roll dices using an expression of the kind `NdX`
 * `g.attack` -> roll dices (see \<roll>) and solve attack using Crossdoom rules
+* ` g.ghost` -> roll 6-sided dices with a _ghost dice_ using Ghostbuster rules
 * `  g.deal` -> deal cards [work in progress]
 * `  g.quit` -> disconnect the bot (developer only)
 
@@ -76,7 +80,7 @@ For more information about a specific command, write `g.help <command_name>`
 Roll dices with an expression of the kind `NdX`:
 - **N**: number of dices [int]
 - **X**: type of dices [int o 's']
-  - the expression `Nds` is used to roll **N** _dadi semaforo_.
+  - the expression `Nds` is used to roll **N** _destiny dice_.
 
 **Return**: single rolls and sum of dices.
 

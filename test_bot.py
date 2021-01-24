@@ -1,32 +1,59 @@
-from discord.ext import commands
 from dotenv import load_dotenv, find_dotenv
 import discord
+from discord.ext import commands
+from discord.ext.commands import Bot
 import random
 import os
 import d20
 from games import diceIterClass
+from help_dict import help_dict  # new help
 
+#bot = commands.Bot(command_prefix='g.', help_command=help_command)
+# changed prefix for development version. Remember to change it back
+bot = commands.Bot(command_prefix='d.', help_command=None)
 
-class MyHelpCommand(commands.DefaultHelpCommand):    
-    def get_ending_note(self):
-        return 'Scrivi `g.help <comando>` per avere più informazioni su uno specifico comando.'
-    def command_not_found(self, command):
-        return f'Comando <{command}> non trovato'
-
-
-help_command = MyHelpCommand(brief='-> Mostra questo messaggio',
-    no_category = 'Comandi', commands_heading = 'Comandi')
-
-bot = commands.Bot(command_prefix='g.', help_command=help_command)
-
+config_dict = {}  # to store guild configuration parameters
 
 @bot.event
 async def on_ready():
     print('We have logged on as {0.user}'.format(bot))
-## Uncomment to change avatar
-#    with open('img/icon.png', 'rb') as f:
-#        image = f.read()
-#        await bot.user.edit(avatar=image)
+    # initial config (defaults)
+    for guild in bot.guilds:
+        config_dict[guild] = {}  # initialize
+        config_dict[guild]['lang'] = 'ITA'  # default to ITA
+        print('{}\n{}'.format(guild, config_dict[guild]))  # DEBUG
+
+# New help command (using embed)
+@bot.command(name='help')
+async def _help(ctx, arg=None):
+    """Custom help command"""
+    commands_names = [x.name for x in bot.commands]
+    embed = discord.Embed(title='Help', color=discord.Colour.gold())
+    # Italian Help
+    if config_dict[ctx.guild]['lang'] == 'ITA':
+        if not arg:  # List all commands
+            embed.add_field(name='Lista dei comandi:',
+                            value='\n'.join(['{}. {}'.format(i, x) for i, x in enumerate(
+                            commands_names, start=1)]), inline=False)
+            embed.add_field(name='Dettagli', value='Scrivi `d.help <comando>` ' +
+                'per maggiori informazioni su uno specifico comando.')
+        elif arg in commands_names:  # specific command help
+            embed.add_field(name=arg, value=help_dict[arg][config_dict[ctx.guild]['lang']])
+        else:
+            embed.add_field(name='Well...', value='Il comando {} non esiste'.format(arg))
+    # English Help
+    elif config_dict[ctx.guild]['lang'] == 'ENG':
+        if not arg:  # List all commands
+            embed.add_field(name='Commands list:',
+                            value='\n'.join(['{}. {}'.format(i, x) for i, x in enumerate(
+                            commands_names, start=1)]), inline=False)
+            embed.add_field(name='Details', value='Write `d.help <command>` ' +
+                'for more info about a specific command.')
+        elif arg in commands_names:  # specific command help
+            embed.add_field(name=arg, value=help_dict[arg][config_dict[ctx.guild]['lang']])
+        else:
+            embed.add_field(name='Well...', value='Command {} does not exist'.format(arg))
+    await ctx.send(embed=embed)
 
 
 # New implementation using d20
@@ -60,14 +87,14 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
                     else:
                         red += 1
                 result_dice = '  '.join(['🟩']*green + ['🟧']*yellow + ['🟥']*red)
-                result_string = ', '.join(['**Verde** = {}'.format(green)]*(green>0) + 
+                result_string = ', '.join(['**Verde** = {}'.format(green)]*(green>0) +
                                           ['**Giallo** = {}'.format(yellow)]*(yellow>0) +
                                           ['**Rosso** = {}'.format(red)]*(red>0))
                 if num > 10:
                     await ctx.send('Risultato: {}'.format(result_string))
                 else:
                     await ctx.send('Risultato: {}\n{}'.format(result_dice, result_string))
-                
+
             except ValueError:
                 await ctx.send('Inserire un\'espressione valida (prova `g.help`)')
                 return
@@ -78,6 +105,7 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
 
 @bot.command(name='attack', brief='-> Tira dadi e usa le regole di Crossdoom per l\'attacco')
 async def _attack(ctx, dice: str):
+    #TODO: debug this command. Sometimes it raises an error
     """Tira un dado usando un'espressione (vedi g.help roll) e calcola
 il risultato dell'attacco secondo il regolamento di Crossdoom.
 
@@ -105,7 +133,32 @@ https://www.crossdoom.it/
         await ctx.send(dice_message)
     except d20.errors.RollSyntaxError:
         await ctx.send('Espressione non valida, consulta `g.help roll`')
-    
+
+
+@bot.command(name='ghost')
+async def _ghost(ctx, N: int):
+    """Tira N dadi a sei facce per il gioco di ruolo Ghostbusters."""
+    gb_logo = bot.get_emoji(802986879808569385)  # check custom emoji ID
+    roll_map = {1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 'ghost': '{}'.format(gb_logo)}
+    rolls = [random.randint(1,6) for _i in range(N-1)]  # normal rolls
+    ghost_die = random.randint(1,6)
+    roll_icons = ''
+    roll_text = '('
+    for dice in rolls:
+        roll_icons += '{} '.format(roll_map[dice])
+        roll_text += '{}, '.format(dice)
+    roll_text += '**{}**)'.format(ghost_die)
+    if ghost_die == 6:
+        roll_icons += '{}'.format(roll_map['ghost'])
+    else:
+        roll_icons += '{}'.format(roll_map[ghost_die])
+    if config_dict[ctx.guild]['lang'] == 'ITA':
+        await ctx.send('{}\n**Risultato:** {}, tot = {}'. format(
+                        roll_icons, roll_text, sum(rolls)+ghost_die))
+    elif config_dict[ctx.guild]['lang'] == 'ENG':
+        await ctx.send('{}\n**Result:** {}, tot = {}'. format(
+                        roll_icons, roll_text, sum(rolls)+ghost_die))
+
 
 @bot.command(name='quit', brief='-> Disconnetti il bot')
 @commands.is_owner()  # just the bot owner has permission
@@ -117,7 +170,7 @@ async def _quit(ctx):
     await bot.logout()
 # Error handling
 @_quit.error
-async def stop_error(ctx, error):
+async def quit_error(ctx, error):
     if isinstance(error, commands.CheckFailure):  # if user has no permissions
         with open('quote.txt', 'r') as quotes:
             lines = quotes.readlines()
