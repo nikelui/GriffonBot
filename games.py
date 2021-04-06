@@ -3,6 +3,12 @@ import random
 import d20
 
 
+class configClass:
+    """Class to store configuration files"""
+    def __init__(self):
+        self.conf = {}
+
+
 class diceIterClass:
     """Class to iterate through the dice expressions"""
     def __init__(self, obj):

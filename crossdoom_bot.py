@@ -30,8 +30,8 @@ async def on_ready():
     print('We have logged on as {0.user}'.format(bot))
     # # initial config (defaults)
     # Load config file if exist, otherwise create it
-    if os.path.isfile('guild_config.json'):
-        with open('guild_config.json', 'r') as f:
+    if os.path.isfile('crossdoom_config.json'):
+        with open('crossdoom_config.json', 'r') as f:
             temp = f.read()
             config_dict.conf = json.loads(temp) # load guild configuration parameters
             print(config_dict.conf)  # DEBUG
@@ -41,7 +41,7 @@ async def on_ready():
             config_dict.conf[guild.id]['prefix'] = '?'  # default prefix
             config_dict.conf[guild.id]['lang'] = 'ITA'  # default to ITA
             print('{}:{}\n{}'.format(guild, guild.id, config_dict.conf))  # DEBUG
-        with open('guild_config.json', 'w') as f:
+        with open('crossdoom_config.json', 'w') as f:
             temp = json.dumps(config_dict.conf, indent=4, sort_keys=True)
             f.write(temp)
 
@@ -52,7 +52,7 @@ async def on_guild_join(guild): # when the bot joins the guild
     config_dict.conf[guild.id] = {}  # initialize guild
     config_dict.conf[guild.id]['prefix'] = '?'  # default prefix
     config_dict.conf[guild.id]['lang'] = 'ITA'  # default to ITA
-    with open('guild_config.json', 'w') as f:  # write the config on file
+    with open('crossdoom_config.json', 'w') as f:  # write the config on file
         temp = json.dumps(config_dict.conf, f, indent=4, sort_keys=True)
         f.write(temp)
 
@@ -61,7 +61,7 @@ async def on_guild_join(guild): # when the bot joins the guild
 async def on_guild_remove(guild): # when the bot is removed from the guild
     # Remove guild to config class
     _ = config_dict.conf.pop(str(guild.id))  # delete guild entry
-    with open('guild_config.json', 'w') as f:  # write the config on file
+    with open('crossdoom_config.json', 'w') as f:  # write the config on file
         temp = json.dumps(config_dict.conf, f, indent=4, sort_keys=True)
         f.write(temp)
 
@@ -146,10 +146,12 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
                     await ctx.send('Risultato: {}\n{}'.format(result_dice, result_string))
 
             except ValueError:
-                await ctx.send('Inserire un\'espressione valida (prova `g.help`)')
+                await ctx.send('Inserire un\'espressione valida (prova `{}help`)'.format(
+                				config_dict.conf[str(ctx.guild.id)]['prefix']))
                 return
         else:
-            await ctx.send('Inserire un\'espressione valida (prova `g.help`)')
+            await ctx.send('Inserire un\'espressione valida (prova `{}help`)'.format(
+                			config_dict.conf[str(ctx.guild.id)]['prefix']))
             return
 
 
@@ -182,63 +184,26 @@ https://www.crossdoom.it/
         dice_message = '\n'.join(message)
         await ctx.send(dice_message)
     except d20.errors.RollSyntaxError:
-        await ctx.send('Espressione non valida, consulta `g.help roll`')
-
-
-@bot.command(name='ghost')
-async def _ghost(ctx, N: int):
-    """Tira N dadi a sei facce per il gioco di ruolo Ghostbusters."""
-    gb_logo = bot.get_emoji(802986879808569385)  # check custom emoji ID
-    roll_map = {1: '1️⃣', 2: '2️⃣', 3: '3️⃣', 4: '4️⃣', 5: '5️⃣', 6: '6️⃣', 'ghost': '{}'.format(gb_logo)}
-    rolls = [random.randint(1,6) for _i in range(N-1)]  # normal rolls
-    ghost_die = random.randint(1,6)
-    roll_icons = ''
-    roll_text = '('
-    for dice in rolls:
-        roll_icons += '{} '.format(roll_map[dice])
-        roll_text += '{}, '.format(dice)
-    roll_text += '**{}**)'.format(ghost_die)
-    if ghost_die == 6:
-        roll_icons += '{}'.format(roll_map['ghost'])
-    else:
-        roll_icons += '{}'.format(roll_map[ghost_die])
-    if config_dict.conf[str(ctx.guild.id)]['lang'] == 'ITA':
-        await ctx.send('{}\n**Risultato:** {}, tot = {}'. format(
-                        roll_icons, roll_text, sum(rolls)+ghost_die))
-    elif config_dict.conf[str(ctx.guild.id)]['lang'] == 'ENG':
-        await ctx.send('{}\n**Result:** {}, tot = {}'. format(
-                        roll_icons, roll_text, sum(rolls)+ghost_die))
+        await ctx.send('Espressione non valida, consulta `{}help roll`'.format(
+                		config_dict.conf[str(ctx.guild.id)]['prefix']))
 
 
 @bot.command(name='quit', brief='-> Disconnetti il bot')
 @commands.is_owner()  # just the bot owner has permission
 async def _quit(ctx):
-    """Disconnette il bot dal server e lascia una citazione. Punti extra se si indovina la fonte."""
-    with open('quote.txt', 'r') as quotes:
-        lines = quotes.readlines()
-        await ctx.send('{}'.format(lines.pop(random.randint(0, len(lines)-1))))
+    """Disconnette il bot dal server."""
     await bot.logout()
 # Error handling
 @_quit.error
 async def quit_error(ctx, error):
     if isinstance(error, commands.CheckFailure):  # if user has no permissions
-        with open('quote.txt', 'r') as quotes:
-            lines = quotes.readlines()
-            await ctx.send('{}'.format(lines.pop(random.randint(0, len(lines)-1))))
+    	ctx.send('{}, non hai i permessi per questo comando'.format(ctx.author))
         # if you are not the owner, do not logout
-
-
-@bot.command(name='deal', brief='-> Assegna carte')
-async def _deal(ctx, N: int):
-    """Pesca N carte da un mazzo preesistente nel canale e le assegna all'autore del comando.
-WORK IN PROGRESS
-"""
-    await ctx.send('Just a test to see if the command works')
 
 
 # NEW (secure) method to load token using .env file
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
-bot_token = os.getenv('GRIFONE_TOKEN')
+bot_token = os.getenv('CROSSDOOM_TOKEN')
 bot.run(bot_token)

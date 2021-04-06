@@ -1,5 +1,6 @@
 # GriffonBot [ITA]
 Un bot multi-funzione in Python, sviluppato per il server Discord della [Gilda del Grifone](http://www.gildadelgrifonetorino.it/).
+
 [Vienici a trovare](https://www.facebook.com/LaGildadelGrifone)
 
 ## Dipendenze
@@ -45,6 +46,7 @@ Per maggiori informazioni sulla sintassi utilizzata:
 
 # GriffonBot [ENG]
 A multi-purpose RPG companion bot in Python, developed for the discord server of la [Gilda del Grifone](http://www.gildadelgrifonetorino.it/).
+
 [Visit us](https://www.facebook.com/LaGildadelGrifone)
 
 **Note**: To authenticate the bot, you need to place your discord token in a file called `.env` in the same directory as the scripts, containing the following line:
