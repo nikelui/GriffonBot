@@ -14,7 +14,7 @@ def get_prefix(client, message):
     with open('guild_config.json', 'r') as f:
         temp = f.read()
         config_dict = json.loads(temp) # load guild configuration parameters
-        temp = config_dict.get(str(message.guild.id), {'prefix':'?'})  # return guild prefix, or default
+        temp = config_dict.get(str(message.guild.id), {'prefix':'g.'})  # return guild prefix, or default
         pref = temp['prefix']
     return pref
 
@@ -30,18 +30,19 @@ async def on_ready():
     print('We have logged on as {0.user}'.format(bot))
     # # initial config (defaults)
     # Load config file if exist, otherwise create it
-    if os.path.isfile('guild_config.json'):
-        with open('guild_config.json', 'r') as f:
+    cwd = os.getcwd()
+    if os.path.isfile('{}/guild_config.json'.format(cwd)):
+        with open('{}/guild_config.json'.format(cwd), 'r') as f:
             temp = f.read()
             config_dict.conf = json.loads(temp) # load guild configuration parameters
             print(config_dict.conf)  # DEBUG
     else:
         for guild in bot.guilds:  # create defaults for each guild if no config exists
             config_dict.conf[guild.id] = {}  # initialize guild
-            config_dict.conf[guild.id]['prefix'] = '?'  # default prefix
+            config_dict.conf[guild.id]['prefix'] = 'g.'  # default prefix
             config_dict.conf[guild.id]['lang'] = 'ITA'  # default to ITA
             print('{}:{}\n{}'.format(guild, guild.id, config_dict.conf))  # DEBUG
-        with open('guild_config.json', 'w') as f:
+        with open('{}/guild_config.json'.format(cwd), 'w') as f:
             temp = json.dumps(config_dict.conf, indent=4, sort_keys=True)
             f.write(temp)
 
@@ -49,10 +50,11 @@ async def on_ready():
 @bot.event
 async def on_guild_join(guild): # when the bot joins the guild
     # Add guild to config class
+    cwd = os.getcwd()
     config_dict.conf[guild.id] = {}  # initialize guild
     config_dict.conf[guild.id]['prefix'] = '?'  # default prefix
     config_dict.conf[guild.id]['lang'] = 'ITA'  # default to ITA
-    with open('guild_config.json', 'w') as f:  # write the config on file
+    with open('{}/guild_config.json'.format(cwd), 'w') as f:  # write the config on file
         temp = json.dumps(config_dict.conf, f, indent=4, sort_keys=True)
         f.write(temp)
 
@@ -60,17 +62,20 @@ async def on_guild_join(guild): # when the bot joins the guild
 @bot.event
 async def on_guild_remove(guild): # when the bot is removed from the guild
     # Remove guild to config class
+    cwd = os.getcwd()
     _ = config_dict.conf.pop(str(guild.id))  # delete guild entry
-    with open('guild_config.json', 'w') as f:  # write the config on file
+    with open('{}/guild_config.json'.format(cwd), 'w') as f:  # write the config on file
         temp = json.dumps(config_dict.conf, f, indent=4, sort_keys=True)
         f.write(temp)
 
 
 # New help command (using embed)
-@bot.command(name='help')
+@bot.command(name='help', aliases=['h'])
 async def _help(ctx, arg=None):
     """Custom help command"""
     commands_names = [x.name for x in bot.commands]
+    commands_aliases = [x.aliases for x in bot.commands]
+    print('{}\n{}'.format(commands_names, commands_aliases))  # DEBUG
     embed = discord.Embed(title='Help', color=discord.Colour.gold())
     # Italian Help
     print(config_dict.conf)  # DEBUG
@@ -78,9 +83,14 @@ async def _help(ctx, arg=None):
         if not arg:  # List all commands
             embed.add_field(name='Prefisso: {}'.format(config_dict.conf[str(ctx.guild.id)]['prefix']),
             value='** **')
-            embed.add_field(name='Lista dei comandi:',
-                            value='\n'.join(['{}. {}'.format(i, x) for i, x in enumerate(
-                            commands_names, start=1)]), inline=False)
+
+            # Add aliases to command name (if exist)
+            comms = ['{}. {}'.format(i, x) for i, x in enumerate(commands_names, start=1)]
+            for _i, com in enumerate(comms):
+                if len(commands_aliases[_i]) > 0:
+                    comms[_i] = '{}({})'.format(comms[_i], ','.join(commands_aliases[_i]))
+
+            embed.add_field(name='Lista dei comandi:', value='\n'.join(comms), inline=False)
             embed.add_field(name='Dettagli', value='Scrivi `{}help <comando>` '.format(
                 config_dict.conf[str(ctx.guild.id)]['prefix']) +
                 'per maggiori informazioni su uno specifico comando.')
@@ -93,9 +103,14 @@ async def _help(ctx, arg=None):
         if not arg:  # List all commands
             embed.add_field(name='Prefix: {}'.format(config_dict.conf[str(ctx.guild.id)]['prefix']),
             value='** **')
-            embed.add_field(name='Commands list:',
-                            value='\n'.join(['{}. {}'.format(i, x) for i, x in enumerate(
-                            commands_names, start=1)]), inline=False)
+
+            # Add aliases to command name (if exist)
+            comms = ['{}. {}'.format(i, x) for i, x in enumerate(commands_names, start=1)]
+            for _i, com in enumerate(comms):
+                if len(commands_aliases[_i]) > 0:
+                    comms[_i] = '{} ({})'.format(comms[_i], ', '.join(commands_aliases[_i]))
+
+            embed.add_field(name='Commands list:', value='\n'.join(comms), inline=False)
             embed.add_field(name='Details', value='Write `{}help <command>` '.format(
                 config_dict.conf[str(ctx.guild.id)]['prefix']) +
                 'for more info about a specific command.')
@@ -107,7 +122,7 @@ async def _help(ctx, arg=None):
 
 
 # New implementation using d20
-@bot.command(name='roll', brief='-> Tira un dado')
+@bot.command(name='roll', brief='-> Tira un dado', aliases=['r'])
 async def _roll(ctx, dice: str):
     """Tira un dado usando un'espressione del tipo NdX:
 - N: numero di dadi [int]
@@ -123,7 +138,7 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
         res = d20.roll(dice)
         await ctx.send('Risultato: {}'.format(str(res)))
     except d20.errors.RollSyntaxError:
-        if 'ds' in dice:  # dado semaforo
+        if 'ds' in dice.lower():  # dado semaforo
             green, yellow, red = 0, 0, 0  # to store results
             num = dice.split('ds')[0]
             try:
@@ -146,17 +161,20 @@ https://d20.readthedocs.io/en/latest/start.html#dice-syntax
                     await ctx.send('Risultato: {}\n{}'.format(result_dice, result_string))
 
             except ValueError:
-                await ctx.send('Inserire un\'espressione valida (prova `g.help`)')
+                await ctx.send('Inserire un\'espressione valida (prova `{}help`)'.format(
+                            config_dict.conf[str(message.guild.id)]['prefix']))
                 return
         else:
-            await ctx.send('Inserire un\'espressione valida (prova `g.help`)')
+            await ctx.send('Inserire un\'espressione valida (prova `{}help`)'.format(
+                            config_dict.conf[str(message.guild.id)]['prefix']))
             return
 
 
-@bot.command(name='attack', brief='-> Tira dadi e usa le regole di Crossdoom per l\'attacco')
+@bot.command(name='attack', brief='-> Tira dadi e usa le regole di Crossdoom per l\'attacco',
+             aliases=['atk'])
 async def _attack(ctx, dice: str):
     #TODO: debug this command. Sometimes it raises an error
-    """Tira un dado usando un'espressione (vedi g.help roll) e calcola
+    """Tira un dado usando un'espressione (vedi `help r`) e calcola
 il risultato dell'attacco secondo il regolamento di Crossdoom.
 
 Restituisce: singoli valori e risultato dell'attacco
@@ -185,7 +203,7 @@ https://www.crossdoom.it/
         await ctx.send('Espressione non valida, consulta `g.help roll`')
 
 
-@bot.command(name='ghost')
+@bot.command(name='ghost', aliases=['gh'])
 async def _ghost(ctx, N: int):
     """Tira N dadi a sei facce per il gioco di ruolo Ghostbusters."""
     gb_logo = bot.get_emoji(802986879808569385)  # check custom emoji ID
@@ -233,7 +251,7 @@ async def _deal(ctx, N: int):
     """Pesca N carte da un mazzo preesistente nel canale e le assegna all'autore del comando.
 WORK IN PROGRESS
 """
-    await ctx.send('Just a test to see if the command works')
+    await ctx.send('COMING SOON (Just a test to see if the command works)')
 
 
 # NEW (secure) method to load token using .env file

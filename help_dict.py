@@ -48,9 +48,9 @@ https://www.crossdoom.it/
 
 'quit':{
 'ITA':"""Sintassi: `quit`
-[Solo per sviluppatore] Disconnette il bot dal server e lascia una citazione random. Punti extra se si indovina la fonte.""",
+[Solo per sviluppatore] Disconnette il bot dal server.""",
 'ENG':"""Syntax: `quit`
-[developer only] Disconnect the bot from the server and gives a random quote (Italian only). Extra points if you can guess the source."""
+[developer only] Disconnect the bot from the server."""
 },
 
 'deal': {
