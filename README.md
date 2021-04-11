@@ -110,6 +110,6 @@ A dedicated bot for the roleplaying game [Crossdoom](https://www.crossdoom.it/)
 - `?Nds`: roll N _destiny dices_
 - `!NdX`: roll N dices with X sides and solve attack using Crossdoom rules
 
-## Altri comandi
+## Other commands
 - `c.help`: show available commands
 - `c.quit`: disconnect the bot (owner only)
