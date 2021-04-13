@@ -194,5 +194,5 @@ async def quit_error(ctx, error):
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
-bot_token = os.getenv('GRIFONE_TOKEN')
+bot_token = os.getenv('CROSSDOOM_TOKEN')
 bot.run(bot_token)
